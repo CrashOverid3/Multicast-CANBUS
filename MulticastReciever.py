@@ -3,7 +3,7 @@ import time
 import can
 from can.interfaces.udp_multicast import UdpMulticastBus
 
-with UdpMulticastBus(channel=UdpMulticastBus.DEFAULT_GROUP_IPv4) as udpbus:
+with UdpMulticastBus(channel='224.1.1.1') as udpbus:
     buffer = can.BufferedReader()
     can.Logger('test.txt').on_message_received(buffer.get_message())
 #    try:
