@@ -3,13 +3,18 @@ import time
 import can
 from can.interfaces.udp_multicast import UdpMulticastBus
 
-with UdpMulticastBus(channel='224.1.1.1') as udpbus, \
+with UdpMulticastBus(port=1337) as udpbus, \
                      can.ThreadSafeBus(interface='socketcan', channel='vcan0') as hwrbus:
     buffer = can.BufferedReader()
     can.Notifier(hwrbus, [buffer])
     try:
         while True:
-            udpbus.send(buffer.get_message())
+            msg = buffer.get_message()
+            #print(msg)
+            try:
+                udpbus.send(msg)
+            except can.CanError:
+                print('MSG FAILED!')
     except KeyboardInterrupt:
         buffer.stop()
         print('Stopping...')

@@ -3,14 +3,16 @@ import time
 import can
 from can.interfaces.udp_multicast import UdpMulticastBus
 
-with UdpMulticastBus(channel='224.1.1.1') as udpbus:
+with UdpMulticastBus(port=1337) as udpbus:
+    logger = can.Logger('test.txt')
     buffer = can.BufferedReader()
-    can.Logger('test.txt').on_message_received(buffer.get_message())
-#    try:
-#        while True:
     can.Notifier(udpbus, [buffer])
-#    except KeyboardInterrupt:
-#        buffer.stop()
-        #writer.stop()
-#        print('Stopping...')
-#        pass
+    try:
+        while True:
+            msg = buffer.get_message()
+            #print(msg)
+            logger(msg)
+    except KeyboardInterrupt:
+        buffer.stop()
+        print('Stopping...')
+        pass
